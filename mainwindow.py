@@ -1,0 +1,179 @@
+# -*- coding: utf-8 -*-
+
+import datetime
+import pandas as pd
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(803, 518)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 20, 771, 475))
+        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setObjectName("gridLayout")
+        self.label_2 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 0, 2, 1, 1)
+        self.dateExit = QtWidgets.QDateEdit(self.gridLayoutWidget)
+        self.dateExit.setDateTime(QtCore.QDateTime(QtCore.QDate(2017, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateExit.setObjectName("dateExit")
+        self.gridLayout.addWidget(self.dateExit, 0, 3, 1, 1)
+        self.dateEdit = QtWidgets.QDateEdit(self.gridLayoutWidget)
+        self.dateEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2017, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit.setObjectName("dateEdit")
+        self.gridLayout.addWidget(self.dateEdit, 0, 9, 1, 1, QtCore.Qt.AlignLeft)
+        self.dateEntry = QtWidgets.QDateEdit(self.gridLayoutWidget)
+        self.dateEntry.setDateTime(QtCore.QDateTime(QtCore.QDate(2017, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEntry.setObjectName("dateEntry")
+        self.gridLayout.addWidget(self.dateEntry, 0, 1, 1, 1)
+        self.label = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1, QtCore.Qt.AlignLeft)
+        self.addStay = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.addStay.setObjectName("addStay")
+        self.gridLayout.addWidget(self.addStay, 0, 4, 1, 1)
+        self.line = QtWidgets.QFrame(self.gridLayoutWidget)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.gridLayout.addWidget(self.line, 3, 5, 1, 1)
+        self.calculate = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.calculate.setObjectName("calculate")
+        self.gridLayout.addWidget(self.calculate, 2, 0, 1, 5)
+        self.removeStay = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.removeStay.setObjectName("removeStay")
+        self.gridLayout.addWidget(self.removeStay, 1, 9, 1, 1, QtCore.Qt.AlignTop)
+        self.listWidget_2 = QtWidgets.QListWidget(self.gridLayoutWidget)
+        self.listWidget_2.setObjectName("listWidget_2")
+        self.gridLayout.addWidget(self.listWidget_2, 3, 0, 1, 5)
+        self.listWidget = QtWidgets.QListWidget(self.gridLayoutWidget)
+        self.listWidget.setObjectName("listWidget")
+        self.gridLayout.addWidget(self.listWidget, 1, 0, 1, 9)
+        self.listWidget_3 = QtWidgets.QListWidget(self.gridLayoutWidget)
+        self.listWidget_3.setObjectName("listWidget_3")
+        self.gridLayout.addWidget(self.listWidget_3, 3, 6, 1, 4)
+        self.forecastEntry = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.forecastEntry.setObjectName("forecastEntry")
+        self.gridLayout.addWidget(self.forecastEntry, 2, 6, 1, 4)
+        self.label_3 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 0, 5, 1, 4, QtCore.Qt.AlignRight)
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.dateEntry, self.dateExit)
+        MainWindow.setTabOrder(self.dateExit, self.addStay)
+        MainWindow.setTabOrder(self.addStay, self.dateEdit)
+        MainWindow.setTabOrder(self.dateEdit, self.listWidget)
+        MainWindow.setTabOrder(self.listWidget, self.removeStay)
+        MainWindow.setTabOrder(self.removeStay, self.calculate)
+        MainWindow.setTabOrder(self.calculate, self.listWidget_2)
+        MainWindow.setTabOrder(self.listWidget_2, self.forecastEntry)
+        MainWindow.setTabOrder(self.forecastEntry, self.listWidget_3)
+
+        self.dates = []
+        self.dateEntry.setFocus()
+        self.addStay.clicked.connect(self.printToList)
+        self.removeStay.clicked.connect(self.removeStayAction)
+        self.calculate.clicked.connect(self.calculateStay)
+        self.forecastEntry.clicked.connect(self.nextPossibleEntry)
+
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Schengen stay calculator"))
+        self.label_2.setText(_translate("MainWindow", "Exit:"))
+        self.label.setText(_translate("MainWindow", "Entry:"))
+        self.addStay.setText(_translate("MainWindow", "Add stay"))
+        self.calculate.setText(_translate("MainWindow", "Calculate duration of stay since first entry"))
+        self.removeStay.setText(_translate("MainWindow", "Remove stay"))
+        self.forecastEntry.setText(_translate("MainWindow", "Date of the next possible entry"))
+        self.label_3.setText(_translate("MainWindow", "Visa valid until:"))
+
+
+    def getDates(self):
+
+        self.dateOfEntry = self.dateEntry.date()
+        self.dateIn = self.dateOfEntry.toString()
+        self.dateOfEntryPy = self.dateOfEntry.toPyDate()
+
+        self.dateOfExit = self.dateExit.date()  # for doing the if below
+
+        if self.dateOfExit < self.dateOfEntry:
+            # Error box for condition Entry > Exit
+            msgbox = QtWidgets.QMessageBox()
+            msgbox.setText('Date of exit must be after date of entry.')
+            msgbox.exec_()
+            return False  # To be picked up by def printToList
+        else:
+            self.dateOut = self.dateOfExit.toString()
+            self.dateOfExitPy = self.dateOfExit.toPyDate()
+            if self.dateOfExitPy > datetime.date.today():
+                msgbox = QtWidgets.QMessageBox()
+                msgbox.setText('Date of exit cannot be later than today.')
+                msgbox.exec_()
+            else:
+                # Add dates to the list
+                self.dates.append([self.dateOfEntryPy, self.dateOfExitPy])
+                return True
+
+    def printToList(self):
+        if self.getDates() is True:
+            self.listWidget.addItem('Entry on {} and exit on {}'.format(self.dateIn, self.dateOut))
+
+    def removeStayAction(self):
+        # Error handling for when there are no items on the list
+        try:
+            self.listWidget.takeItem(self.listWidget.currentRow())
+            self.dates.remove(self.dates[self.listWidget.currentRow()])
+        except:
+            pass
+    #  Create ranges out of the entry and exit dates
+
+    def createRange(self, list):
+        rangeofdates = pd.date_range(start=list[0], end=list[1])
+        return rangeofdates
+
+    def calculateStay(self):
+        self.total_days = 0
+        for stay in self.dates:
+            rangeofdates = self.createRange(stay)  # create a range from dateOfEntry and dateOfExit
+            for item in rangeofdates:
+                if (item.date() - datetime.date.today()) >= datetime.timedelta(-180):
+                    self.total_days += 1
+        if self.total_days >= 90:
+            print(self.total_days)
+            self.listWidget_2.clear()
+            self.listWidget_2.addItem('You have been {} days in the Schengen area in the past 180 days.'
+                                      .format(self.total_days) +
+                                      '\n\nATTENTION YOU ARE EXCEEDING THE LEGAL PERIOD OF STAY')
+        else:
+            self.listWidget_2.clear()
+            self.listWidget_2.addItem('You have been {} days in the Schengen area in the past 180 days.'
+                                      .format(self.total_days) +
+                                      '\n\nYou are still allowed to stay {} days'.format(90-self.total_days))
+
+    def nextPossibleEntry(self):
+        self.calculateStay()
+        if self.total_days < 90:
+            self.listWidget_3.clear()
+            self.listWidget_3.addItem('The next possible entry is: ' + str(datetime.date.today()+datetime.timedelta(1)))
+        else:
+            pass
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
+
