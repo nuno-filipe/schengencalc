@@ -105,24 +105,36 @@ class Ui_MainWindow(object):
 
         self.dateOfExit = self.dateExit.date()  # for doing the if below
 
+        self.dateOut = self.dateOfExit.toString()
+        self.dateOfExitPy = self.dateOfExit.toPyDate()
+
         if self.dateOfExit < self.dateOfEntry:
             # Error box for condition Entry > Exit
             msgbox = QtWidgets.QMessageBox()
             msgbox.setText('Date of exit must be after date of entry.')
             msgbox.exec_()
             return False  # To be picked up by def printToList
+        elif self.dateOfExitPy > datetime.date.today():
+            msgbox = QtWidgets.QMessageBox()
+            msgbox.setText('Date of exit cannot be later than today.')
+            msgbox.exec_()
         else:
-            self.dateOut = self.dateOfExit.toString()
-            self.dateOfExitPy = self.dateOfExit.toPyDate()
-            if self.dateOfExitPy > datetime.date.today():
+            days_overlapping = 0
+            for stay in self.dates:
+                range_of_stay = pd.date_range(start=stay[0], end=stay[1])
+                range_new_item = pd.date_range(start=self.dateOfEntryPy, end=self.dateOfExitPy)
+                for day in range_new_item:
+                    if day in range_of_stay:
+                        days_overlapping += 1
+            if days_overlapping >= 1:
                 msgbox = QtWidgets.QMessageBox()
-                msgbox.setText('Date of exit cannot be later than today.')
+                msgbox.setText('Durations of stay cannot overlap.')
                 msgbox.exec_()
-            else:
-                # Add dates to the list
-                self.dates.append([self.dateOfEntryPy, self.dateOfExitPy])
-                self.dates.sort()
-                return True
+                return False
+        # Add dates to the list
+        self.dates.append([self.dateOfEntryPy, self.dateOfExitPy])
+        self.dates.sort()
+        return True
 
     def printToList(self):
         if self.getDates() is True:
