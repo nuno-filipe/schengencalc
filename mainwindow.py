@@ -142,30 +142,58 @@ class Ui_MainWindow(object):
 
     def calculateStay(self):
         self.total_days = 0
-        for stay in self.dates:
-            rangeofdates = self.createRange(stay)  # create a range from dateOfEntry and dateOfExit
-            for item in rangeofdates:
-                if (item.date() - datetime.date.today()) >= datetime.timedelta(-180):
-                    self.total_days += 1
-        if self.total_days >= 90:
-            print(self.total_days)
+        self.total_days_ill = 0
+        try:
+            range_allowed = pd.date_range(start=self.dates[0][0], end=self.dates[0][0]+datetime.timedelta(180))
+            for stay in self.dates:
+                rangeofdates = self.createRange(stay)  # create a range from dateOfEntry and dateOfExit
+                for item in rangeofdates:
+                    if item in range_allowed:
+                        self.total_days += 1
+                    else:
+                        self.total_days_ill += 1
+                    total_of_days = self.total_days + self.total_days_ill
+                if (total_of_days) > 90:
+                    self.listWidget_2.clear()
+                    self.listWidget_2.addItem('You have been {} days in the Schengen area out of 90 days possible, \n'
+                                              'since your first entry.\n\nATTENTION YOU ARE EXCEEDING THE LEGAL PERIOD '
+                                              'OF STAY in {} days.'.format(total_of_days, total_of_days - 90))
+                else:
+                    self.listWidget_2.clear()
+                    self.listWidget_2.addItem('You have been {} days in the Schengen area out of 90 days possible, \n'
+                                              'since your first entry.\n\nYou are still allowed to stay {} days until'
+                                              ' {}.'.format(total_of_days, 90-total_of_days,
+                                                            self.dates[0][0]+datetime.timedelta(180)))
+        except:
             self.listWidget_2.clear()
-            self.listWidget_2.addItem('You have been {} days in the Schengen area in the past 180 days.'
-                                      .format(self.total_days) +
-                                      '\n\nATTENTION YOU ARE EXCEEDING THE LEGAL PERIOD OF STAY')
-        else:
-            self.listWidget_2.clear()
-            self.listWidget_2.addItem('You have been {} days in the Schengen area in the past 180 days.'
-                                      .format(self.total_days) +
-                                      '\n\nYou are still allowed to stay {} days'.format(90-self.total_days))
+
 
     def nextPossibleEntry(self):
         self.calculateStay()
-        if self.total_days < 90:
-            self.listWidget_3.clear()
-            self.listWidget_3.addItem('The next possible entry is: ' + str(datetime.date.today()+datetime.timedelta(1)))
-        else:
-            pass
+        self.listWidget_3.clear()
+        number_loops = 0
+        for stay in self.dates:
+            number_loops += 1
+            range_forecast = pd.date_range(start=stay[1], end=stay[1] + datetime.timedelta(180))
+            try:
+                range_next = self.createRange(self.dates[number_loops])
+                total_days_forecast = 0
+
+                print(range_next)
+
+                for item in range_forecast:
+                    if item in range_next:
+                        total_days_forecast += 1
+
+                        print(total_days_forecast)
+
+                if total_days_forecast > 90:
+                    pass
+                else:
+                    self.listWidget_3.addItem('On the {} you will have a total \nof {} days of stay allowed\n'
+                                              .format(str(stay[1]+datetime.timedelta(180)), 90-total_days_forecast))
+            except IndexError:
+                pass
 
 
 if __name__ == "__main__":
