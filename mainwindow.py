@@ -121,19 +121,23 @@ class Ui_MainWindow(object):
             else:
                 # Add dates to the list
                 self.dates.append([self.dateOfEntryPy, self.dateOfExitPy])
+                self.dates.sort()
                 return True
 
     def printToList(self):
         if self.getDates() is True:
-            self.listWidget.addItem('Entry on {} and exit on {}'.format(self.dateIn, self.dateOut))
+            self.listWidget.addItem('Entry on {} and exit on {}.\t\t({} -> {})'
+                                    .format(self.dateIn, self.dateOut, self.dateOfEntryPy, self.dateOfExitPy))
+            self.listWidget.sortItems()
 
     def removeStayAction(self):
         # Error handling for when there are no items on the list
         try:
             self.listWidget.takeItem(self.listWidget.currentRow())
             self.dates.remove(self.dates[self.listWidget.currentRow()])
-        except:
+        except IndexError:
             pass
+
     #  Create ranges out of the entry and exit dates
 
     def createRange(self, list):
@@ -155,13 +159,13 @@ class Ui_MainWindow(object):
                     total_of_days = self.total_days + self.total_days_ill
                 if (total_of_days) > 90:
                     self.listWidget_2.clear()
-                    self.listWidget_2.addItem('You have been {} days in the Schengen area out of 90 days possible, \n'
-                                              'since your first entry.\n\nATTENTION YOU ARE EXCEEDING THE LEGAL PERIOD '
-                                              'OF STAY in {} days.'.format(total_of_days, total_of_days - 90))
+                    self.listWidget_2.addItem('You stayed {} days in the Schengen area out of 90 days possible, \n'
+                                              'since your first entry.\n\nATTENTION YOU EXCEEDED THE LEGAL PERIOD '
+                                              'OF STAY in:\n{} days.'.format(total_of_days, total_of_days - 90))
                 else:
                     self.listWidget_2.clear()
-                    self.listWidget_2.addItem('You have been {} days in the Schengen area out of 90 days possible, \n'
-                                              'since your first entry.\n\nYou are still allowed to stay {} days until'
+                    self.listWidget_2.addItem('You stayed {} days in the Schengen area out of 90 days possible, \n'
+                                              'since your first entry.\n\nYou are allowed to stay {} days until'
                                               ' {}.'.format(total_of_days, 90-total_of_days,
                                                             self.dates[0][0]+datetime.timedelta(180)))
         except:
@@ -178,20 +182,14 @@ class Ui_MainWindow(object):
             try:
                 range_next = self.createRange(self.dates[number_loops])
                 total_days_forecast = 0
-
-                print(range_next)
-
                 for item in range_forecast:
                     if item in range_next:
                         total_days_forecast += 1
-
-                        print(total_days_forecast)
-
                 if total_days_forecast > 90:
                     pass
                 else:
-                    self.listWidget_3.addItem('On the {} you will have a total \nof {} days of stay allowed\n'
-                                              .format(str(stay[1]+datetime.timedelta(180)), 90-total_days_forecast))
+                    self.listWidget_3.addItem('From the {} you have a total \nof {} days of stay allowed\n'
+                                              .format(str(stay[1]+datetime.timedelta(180)), 91-total_days_forecast))
             except IndexError:
                 pass
 
