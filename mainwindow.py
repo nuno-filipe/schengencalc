@@ -6,10 +6,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
-
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(900, 600)
+        MainWindow.resize(950, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
@@ -28,24 +27,24 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 0, 4, 1, 1)
+        self.resetAllEntries = QtWidgets.QPushButton(self.centralwidget)
+        self.resetAllEntries.setObjectName("resetAllEntries")
+        self.gridLayout.addWidget(self.resetAllEntries, 0, 11, 1, 1)
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setObjectName("listWidget")
         self.gridLayout.addWidget(self.listWidget, 2, 0, 1, 11)
-        self.calculate = QtWidgets.QPushButton(self.centralwidget)
-        self.calculate.setObjectName("calculate")
-        self.gridLayout.addWidget(self.calculate, 5, 0, 1, 8)
         self.removeStay = QtWidgets.QPushButton(self.centralwidget)
         self.removeStay.setObjectName("removeStay")
         self.gridLayout.addWidget(self.removeStay, 2, 11, 1, 1, QtCore.Qt.AlignTop)
+        self.calculate = QtWidgets.QPushButton(self.centralwidget)
+        self.calculate.setObjectName("calculate")
+        self.gridLayout.addWidget(self.calculate, 5, 0, 1, 8)
         self.addStay = QtWidgets.QPushButton(self.centralwidget)
         self.addStay.setObjectName("addStay")
         self.gridLayout.addWidget(self.addStay, 0, 7, 1, 1)
         self.listWidget_3 = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget_3.setObjectName("listWidget_3")
         self.gridLayout.addWidget(self.listWidget_3, 6, 9, 1, 3)
-        self.forecastEntry = QtWidgets.QPushButton(self.centralwidget)
-        self.forecastEntry.setObjectName("forecastEntry")
-        self.gridLayout.addWidget(self.forecastEntry, 5, 9, 1, 3)
         self.listWidget_2 = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget_2.setObjectName("listWidget_2")
         self.gridLayout.addWidget(self.listWidget_2, 6, 0, 1, 8)
@@ -56,40 +55,48 @@ class Ui_MainWindow(object):
         self.dateEntry.setDateTime(QtCore.QDateTime(QtCore.QDate(2017, 1, 1), QtCore.QTime(0, 0, 0)))
         self.dateEntry.setObjectName("dateEntry")
         self.gridLayout.addWidget(self.dateEntry, 0, 1, 1, 1)
-        self.resetAllEntries = QtWidgets.QPushButton(self.centralwidget)
-        self.resetAllEntries.setObjectName("resetAllEntries")
-        self.gridLayout.addWidget(self.resetAllEntries, 0, 11, 1, 1)
-        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.forecastEntry = QtWidgets.QPushButton(self.centralwidget)
+        self.forecastEntry.setObjectName("forecastEntry")
+        self.gridLayout.addWidget(self.forecastEntry, 5, 9, 1, 2)
+        self.dateEdit = QtWidgets.QDateEdit(self.centralwidget)
+        self.dateEdit.setDate(QtCore.QDate(2018, 1, 1))
+        self.dateEdit.setObjectName("dateEdit")
+        self.gridLayout.addWidget(self.dateEdit, 5, 11, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout, 0, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.dateEntry, self.dateExit)
+        MainWindow.setTabOrder(self.dateExit, self.addStay)
         MainWindow.setTabOrder(self.addStay, self.listWidget)
         MainWindow.setTabOrder(self.listWidget, self.removeStay)
         MainWindow.setTabOrder(self.removeStay, self.calculate)
         MainWindow.setTabOrder(self.calculate, self.listWidget_2)
         MainWindow.setTabOrder(self.listWidget_2, self.forecastEntry)
-        MainWindow.setTabOrder(self.forecastEntry, self.listWidget_3)
+        MainWindow.setTabOrder(self.forecastEntry, self.dateEdit)
+        MainWindow.setTabOrder(self.dateEdit, self.listWidget_3)
+        MainWindow.setTabOrder(self.listWidget_3, self.resetAllEntries)
 
         self.dates = []  # list for periods of stay
         self.dateEntry.setFocus()
         self.addStay.clicked.connect(self.printToList)  # add stay to list widget
         self.removeStay.clicked.connect(self.removeStayAction)  # remove stay from list widget and list of stays
         self.calculate.clicked.connect(self.calculateStay)
-        self.forecastEntry.clicked.connect(self.nextPossibleEntry)
+        self.forecastEntry.clicked.connect(self.entry_possible)
         self.resetAllEntries.clicked.connect(self.reset_all_entries)
 
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Schengen stay calculator"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Schengen short-stay calculator [NON OFFICIAL]"))
         self.label_2.setText(_translate("MainWindow", "Exit:"))
-        self.calculate.setText(_translate("MainWindow", "Calculate total duration of stay in the Schenge area"))
-        self.removeStay.setText(_translate("MainWindow", "Remove stay"))
-        self.addStay.setText(_translate("MainWindow", "Add stay"))
-        self.forecastEntry.setText(_translate("MainWindow", "Date of the next possible entry"))
-        self.label.setText(_translate("MainWindow", "Entry:"))
         self.resetAllEntries.setText(_translate("MainWindow", "Reset all entries"))
+        self.removeStay.setText(_translate("MainWindow", "Remove stay"))
+        self.calculate.setText(_translate("MainWindow", "Calculate total duration of stay in the Schenge area"))
+        self.addStay.setText(_translate("MainWindow", "Add stay"))
+        self.label.setText(_translate("MainWindow", "Entry:"))
+        self.forecastEntry.setText(_translate("MainWindow", "Entry possible?"))
 
 
     def getDates(self):
@@ -122,7 +129,7 @@ class Ui_MainWindow(object):
                 for day in range_new_item:
                     if day in range_of_stay:
                         days_overlapping += 1
-            if days_overlapping >= 1:
+            if days_overlapping > 1:
                 msgbox = QtWidgets.QMessageBox()
                 msgbox.setText('Durations of stay cannot overlap.')
                 msgbox.exec_()
@@ -164,21 +171,21 @@ class Ui_MainWindow(object):
                     total_of_days = self.total_days + self.total_days_ill
                 if (total_of_days) > 90:
                     self.listWidget_2.clear()
-                    self.listWidget_2.addItem('You stayed {} days in the Schengen area out of 90 days possible, \n'
+                    self.listWidget_2.addItem('You stayed {} days in the Schengen area out of 90 days possible, '
                                               'since your first entry.\n\nATTENTION YOU EXCEEDED THE LEGAL PERIOD '
-                                              'OF STAY in:\n{} days.'.format(total_of_days, total_of_days - 90))
+                                              'OF STAY IN: {} days.'.format(total_of_days, total_of_days - 90))
                 else:
                     self.listWidget_2.clear()
-                    self.listWidget_2.addItem('You stayed {} days in the Schengen area out of 90 days possible, \n'
+                    self.listWidget_2.addItem('You stayed {} days in the Schengen area out of 90 days possible, '
                                               'since your first entry.\n\nYou are allowed to stay {} days until'
                                               ' {}.'.format(total_of_days, 90-total_of_days,
                                                             self.dates[0][0]+datetime.timedelta(180)))
+            self.nextPossibleEntry()
         except:
             self.listWidget_2.clear()
 
     def nextPossibleEntry(self):
-        self.calculateStay()
-        self.listWidget_3.clear()
+        self.listWidget_2.addItem('\nForecast of possible entries and remaining days based on past entries:\n')
         number_loops = 0  # for selecting position in the list dates
         for stay in self.dates:
             number_loops += 1
@@ -192,11 +199,42 @@ class Ui_MainWindow(object):
                 if total_days_forecast > 90:
                     pass
                 else:
-                    self.listWidget_3.addItem('From the {} you have a total \nof {} days of stay allowed\n'
+                    self.listWidget_2.addItem('- From the {} you have a total of {} days of stay allowed\n'
                                               .format(str(stay[1]+datetime.timedelta(180)), 91-total_days_forecast))
+            except IndexError:
+                self.listWidget_2.addItem('- From the {} you have a total of {} days of stay allowed\n'
+                                          .format(str(stay[1] + datetime.timedelta(180)), 90))
+
+    def entry_possible(self):
+        entry_test = self.dateEdit.date()
+        self.listWidget_3.clear()
+        if entry_test < datetime.date.today():
+            msgbox = QtWidgets.QMessageBox()
+            msgbox.setText('Please use a date greater than today')
+            msgbox.exec_()
+        elif self.dates == []:
+            self.listWidget_3.clear()
+        else:
+            try:
+                range_to_check = pd.date_range(start=entry_test.toPyDate()-datetime.timedelta(180),
+                                               end=entry_test.toPyDate())
+                total_stay_in_range = 0
+                for stay in self.dates:
+                    rangeofdates = self.createRange(stay)  # create a range from dateOfEntry and dateOfExit
+                    for item in rangeofdates:
+                        if item in range_to_check:
+                            total_stay_in_range += 1
+                if total_stay_in_range > 90:
+                    self.listWidget_3.addItem('NOT ALLOWED to enter!\n\nOn {} you have already stayed {} \nin the '
+                                              'Schengen area.'.format(entry_test.toPyDate(), total_stay_in_range))
+                else:
+                    self.listWidget_3.addItem('ALLOWED to enter.\n\nOn the {} you would have spent a \ntotal of {} days'
+                                              ' in Schengen.'.format(entry_test.toPyDate()-datetime.timedelta(180),
+                                                                     91 - total_stay_in_range))
             except IndexError:
                 print(IndexError)
                 pass
+
 
     def reset_all_entries(self):
         self.dates = []
